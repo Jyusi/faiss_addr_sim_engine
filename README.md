@@ -94,9 +94,9 @@ High-performance, production-ready address similarity engine with built-in data 
      --top-k 4
 
 5. **View logs and plots**
-   `address_generator.log` and `system_monitoring.csv`
-   `benchmark_report.csv` and `benchmark_visualisation.png`
-   `system_monitoring_visualisation.png`
+   <li>`address_generator.log` and `system_monitoring.csv`</li>
+   <li>`benchmark_report.csv` and `benchmark_visualisation.png`</li>
+   <li>`system_monitoring_visualisation.png`</li>li>
 
 ---
 
