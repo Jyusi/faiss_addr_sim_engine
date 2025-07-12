@@ -1,0 +1,5 @@
+# requirements-generator.txt
+pandas>=1.3
+numpy>=1.21
+Faker>=8.0.0
+pandarallel>=1.6.5
