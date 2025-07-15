@@ -57,6 +57,7 @@ ENCODING = 'utf-8-sig'
 TOP_K = 4
 BENCHMARK_FILE = "benchmark_report.csv"
 TEMP_DIR = "temp_std_batches"
+TEMP_OUTPUT_DIR = "temp_output"
 OUTPUT_CSV = "similarity_output/final_similarity_output.csv"
 OUTPUT_GZIP = OUTPUT_CSV + ".gz"
 MONITORING_INTERVAL_SEC = 3 # How often to record system stats
@@ -217,15 +218,17 @@ def merge_temp_results(temp_files, output_file):
     with open(output_file, 'w', encoding=ENCODING) as f_out:
         # Write header from the first file
         if temp_files:
-            with open(sorted(temp_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))[0], 'r', encoding=ENCODING) as f_in_header:
+            with open(os.path.join(TEMP_OUTPUT_DIR, sorted(temp_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))[0]), 'r', encoding=ENCODING) as f_in_header:
                 f_out.write(f_in_header.readline())
 
         for i, temp_file in enumerate(sorted(temp_files, key=lambda x: int(x.split('_')[-1].split('.')[0]))):
-            with open(temp_file, 'r', encoding=ENCODING) as f_in:
+            temp_path = os.path.join(TEMP_OUTPUT_DIR, temp_file)
+            with open(temp_path, 'r', encoding=ENCODING) as f_in:
                 if i != 0:
                     next(f_in)  # skip header for subsequent files
                 shutil.copyfileobj(f_in, f_out)
-            os.remove(temp_file)
+            os.remove(temp_path)
+
 
 def compress_final_output(output_file, compressed_file):
     with open(output_file, 'rb') as f_in:
@@ -404,6 +407,9 @@ def main():
 
     merge_temp_results(temp_files, OUTPUT_CSV)
     compress_final_output(OUTPUT_CSV, OUTPUT_GZIP)
+
+    logger.info("🧹 Cleaning up temporary output rows...")
+    shutil.rmtree(TEMP_OUTPUT_DIR)
 
     logger.info("🧹 Cleaning up temporary standardized batches...")
     shutil.rmtree(TEMP_DIR)
